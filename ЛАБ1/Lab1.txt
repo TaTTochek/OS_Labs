@@ -1,0 +1,71 @@
+===========================================================
+
+# Информация об ОС (Пункт 1)
+
+
+tattochek@Ubunturez:~$ uname
+Linux
+
+tattochek@Ubunturez:~$ uname --all
+Linux Ubunturez 6.8.0-45-generic #45-Ubuntu SMP PREEMPT_DYNAMIC Fri Aug 30 12:02:04 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+
+
+===========================================================
+# Пункт 2
+# 1. Создать каталоги students и mentors в домашней директории, а в них — текстовые 
+файлы students_list.txt и mentors_list.txt соответственно.
+
+
+tattochek@Ubunturez:~$ mkdir ~/students
+tattochek@Ubunturez:~$ mkdir ~/mentors
+tattochek@Ubunturez:~$ touch ~/students/students_list.txt
+tattochek@Ubunturez:~$ touch ~/mentors/mentors_list.txt
+
+
+# 2. Открыть созданные в п.1 файлы в любом текстовом редакторе и заполнить их (в 
+соответствии с названием) списком Ваших одногруппников и наставников на 
+данном потоке.
+
+
+tattochek@Ubunturez:~$ nano ~/students/students_list.txt 
+tattochek@Ubunturez:~$ nano ~/mentors/mentors_list.txt
+
+
+# 3. Переместите файл mentors_list.txt в папку students.
+
+
+tattochek@Ubunturez:~$ mv ~/mentors/mentors_list.txt ~/students
+
+
+# 4. Удалите папку mentors.
+
+
+tattochek@Ubunturez:~$ rmdir mentors
+
+
+# 5. Переименуйте папку students в students_and_mentors.
+
+
+tattochek@Ubunturez:~$ mv students students_and_mentors
+
+
+# 6. Удалите папку students_and_mentors вместе с содержимым.
+
+
+tattochek@Ubunturez:~$ rm -r students_and_mentors
+
+
+# 7. Подключитесь к машине с Linux по протоколу SSH.
+
+
+ssh tattochek@192.168.0.104
+
+
+# 8. Используя дополнительный материал, настроить авторизацию по SSH с 
+использованием ключей.
+
+tattochek@Ubunturez:~$ nano .ssh/authorized_keys
+tattochek@Ubunturez:~$ sudo nano /etc/ssh/sshd_config
+
+===========================================================
+

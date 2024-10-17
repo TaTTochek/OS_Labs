@@ -1,0 +1,111 @@
+===========================================================
+1. Управление пользователями
+
+# a) создадим нового пользователя;
+
+
+tattochek@Ubunturez:~$ sudo useradd -s /bin/bash -d /home/tempUser -m tempUser
+
+
+# b) убедимся, что информация о нем появилась в соответствующих файлах в
+системе;
+
+tattochek@Ubunturez:~$ cat /etc/passwd | grep tempUser
+tempUser:x:1001:1001::/home/tempUser:/bin/bash
+tattochek@Ubunturez:~$ cat /etc/group | grep tempUser
+tempUser:x:1001:
+tattochek@Ubunturez:~$ sudo cat /etc/shadow | grep tempUser
+tempUser:!:20012:0:99999:7:::
+
+
+# c) удалим созданного пользователя;
+
+
+tattochek@Ubunturez:~$ sudo userdel tempUser -r
+userdel: tempUser mail spool (/var/mail/tempUser) not found
+
+
+===========================================================
+
+
+2. Управление группами:
+
+# a) создать группу;
+
+
+tattochek@Ubunturez:~$ sudo groupadd tempGroup
+tattochek@Ubunturez:~$ sudo groupadd tempGroup!
+
+
+# b) попрактиковаться в смене групп у пользователей;
+# c) добавить пользователя в группу, не меняя основной;
+# d) удалить пользователя из группы;
+
+
+tattochek@Ubunturez:~$ sudo usermod -G tempGroup tempUser
+tattochek@Ubunturez:~$ groups tempUser
+tempUser : tempUser tempGroup
+
+
+tattochek@Ubunturez:~$ sudo usermod -r -G tempGroup tempUser
+tattochek@Ubunturez:~$ groups tempUser
+tempUser : tempUser
+
+
+tattochek@Ubunturez:~$ sudo usermod -G tempGroup,tempGroup! tempUser
+tattochek@Ubunturez:~$ groups tempUser
+tempUser : tempUser tempGroup tempGroup!
+
+
+tattochek@Ubunturez:~$ sudo usermod -g tempGroup tempUser
+tattochek@Ubunturez:~$ groups tempUser
+tempUser : tempGroup tempGroup!
+
+
+===========================================================
+
+3. Создать пользователя с правами суперпользователя. Проверить
+результат.
+
+tattochek@Ubunturez:~$ sudo useradd -s /bin/bash -d /home/admin4ik -m admin4ik
+tattochek@Ubunturez:~$ sudo usermod -aG sudo admin4ik
+tattochek@Ubunturez:~$ groups admin4ik
+admin4ik : admin4ik sudo
+
+
+===========================================================
+
+
+4. * Используя дополнительные материалы, выдать одному из
+созданных пользователей право на выполнение ряда команд,
+требующих прав суперпользователя (команды выбираем на своё
+усмотрение).
+
+tattochek@Ubunturez:~$ sudo visudo
+
+# вставил tempUser ALL=(ALL) NOPASSWD: /usr/bin/apt, /usr/bin/systemctl
+
+tattochek@Ubunturez:~$ su tempUser
+Password: 
+tempUser@Ubunturez:/home/tattochek$ groups
+tempGroup tempGroup!
+tempUser@Ubunturez:/home/tattochek$ systemctl start ssh
+
+tempUser@Ubunturez:/home/tattochek$ apt update
+Reading package lists... Done
+E: Could not open lock file /var/lib/apt/lists/lock - open (13: Permission denied)
+E: Unable to lock directory /var/lib/apt/lists/
+W: Problem unlinking the file /var/cache/apt/pkgcache.bin - RemoveCaches (13: Permission denied)
+W: Problem unlinking the file /var/cache/apt/srcpkgcache.bin - RemoveCaches (13: Permission denied)
+
+tempUser@Ubunturez:/home/tattochek$ sudo cat /etc/passwd
+[sudo] password for tempUser: 
+Sorry, user tempUser is not allowed to execute '/usr/bin/cat /etc/passwd' as root on Ubunturez.
+
+
+
+
+
+
+
+

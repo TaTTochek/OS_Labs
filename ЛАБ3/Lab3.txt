@@ -1,0 +1,76 @@
+===========================================================
+
+1. Потоки ввода/вывода. Создать файл, используя команду echo. Используя команду cat,
+прочитать содержимое всех файлов каталога etc, ошибки перенаправить в отдельный
+файл.
+
+tattochek@Ubunturez:~$ echo > exapmleFile
+
+
+
+tattochek@Ubunturez:~$ cat /etc/* 2>exampleErrors
+# /etc/adduser.conf: `adduser' configuration.
+# See adduser(8) and adduser.conf(5) for full documentation.
+
+# A commented out setting indicates that this is the default in the
+# code. If you need to change those settings, remove the comment and
+# make your intended change.
+
+# STDERRMSGLEVEL, STDOUTMSGLEVEL, and LOGMSGLEVEL set the minimum
+# priority for messages logged to syslog/journal and the console,
+# respectively.
+...
+...
+...
+# This script will look-up command in the database and suggest
+# installation of packages available from the repository
+
+if [[ -x /usr/lib/command-not-found ]] ; then
+	if (( ! ${+functions[command_not_found_handler]} )) ; then
+		function command_not_found_handler {
+			[[ -x /usr/lib/command-not-found ]] || return 1
+			/usr/lib/command-not-found -- ${1+"$1"} && :
+		}
+	fi
+fi
+
+
+===========================================================
+
+2. Конвейер (pipeline). Использовать команду cut на вывод длинного списка каталога,
+чтобы отобразить только права доступа к файлам. Затем отправить в конвейере этот
+вывод на sort и uniq, чтобы отфильтровать все повторяющиеся строки.
+
+
+
+tattochek@Ubunturez:~$ ls -l | cut -b -10 | sort | uniq
+drwx------
+drwxr-xr-x
+total 36
+
+
+===========================================================
+
+3. Управление процессами. Изменить конфигурационный файл службы SSH:
+/etc/ssh/sshd_config, отключив аутентификацию по паролю PasswordAuthentication no.
+Выполните рестарт службы systemctl restart sshd (service sshd restart), верните
+аутентификацию по паролю, выполните reload службы systemctl reload sshd (services
+sshd reload). В чём различие между действиями restart и reload? Создайте файл при
+помощи команды cat > file_name, напишите текст и завершите комбинацией ctrl+d.
+Какой сигнал передадим процессу?
+
+
+*	Разница между reload и restart
+*	service reload - PID сохраняется (перечитываются настройки), 
+*	service restart - PID меняется (stop + start)
+
+===========================================================
+
+4. Сигналы процессам. Запустите mc. Используя ps, найдите PID процесса, завершите
+процесс, передав ему сигнал 9.
+
+tattochek@Ubunturez:~$ ps aux | grep mc
+tattoch+    4559  0.0  0.1  33948 11828 pts/1    S+   02:42   0:00 mc
+tattochek@Ubunturez:~$ kill -s 9 4559
+
+
