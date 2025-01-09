@@ -1,0 +1,88 @@
+=================================================
+Добавление репозитория
+1-ый способ, редактирование файла
+tattochek@Ubunturez:~$ sudo nano /etc/apt/sources.list.d/ubuntu.sources
+
+2-ой способ, add-apt-repository
+
+tattochek@Ubunturez:~$ sudo add-apt-repository ppa:nginx/stable
+Repository: 'Types: deb
+URIs: https://ppa.launchpadcontent.net/nginx/stable/ubuntu/
+Suites: noble
+Components: main
+'
+Description:
+This PPA contains the latest Stable Release version of the nginx web server software.
+
+**Only Non-End-of-Life Ubuntu Releases are supported in this PPA**
+...
+
+tattochek@Ubunturez:~$ sudo apt update
+
+tattochek@Ubunturez:~$ sudo apt download nginx
+
+tattochek@Ubunturez:~$ sudo dpkg -i nginx_1.24.0-2ubuntu7.1_amd64.deb
+
+tattochek@Ubunturez:~$ sudo dpkg -r nginx
+
+tattochek@Ubunturez:~$ nginx
+Command 'nginx' not found, but can be installed with:
+sudo apt install nginx
+ 
+=================================================
+
+sudo snap install monika (Делал для презентации по утилитам)
+
+
+tattochek@Ubunturez:~$ snap list
+Name                       Version          Rev    Tracking         Publisher   Notes
+bare                       1.0              5      latest/stable    canonical✓  base
+core20                     20240911         2434   latest/stable    canonical✓  base
+core22                     20241119         1722   latest/stable    canonical✓  base
+firefox                    129.0.2-1        4793   latest/stable/…  mozilla✓    -
+firmware-updater           0+git.7983059    147    1/stable/…       canonical✓  -
+gnome-42-2204              0+git.510a601    176    latest/stable/…  canonical✓  -
+gtk-common-themes          0.1-81-g442e511  1535   latest/stable/…  canonical✓  -
+monika                     v1.14.0          30     latest/stable    hyperjump   -
+snap-store                 0+git.4fcd62b7   1218   2/stable/…       canonical✓  -
+snapd                      2.66.1           23258  latest/stable    canonical✓  snapd
+snapd-desktop-integration  0.9              253    latest/stable/…  canonical✓  -
+
+
+=================================================
+
+tattochek@Ubunturez:~$ sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+tattochek@Ubunturez:~$ sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+tattochek@Ubunturez:~$ sudo iptables -A INPUT -j DROP
+tattochek@Ubunturez:~$ sudo iptables -L -v
+Chain INPUT (policy ACCEPT 22 packets, 2649 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere             tcp dpt:ssh
+    0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere             tcp dpt:http
+    2   372 DROP       all  --  any    any     anywhere             anywhere            
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination    
+
+
+=================================================
+
+tattochek@Ubunturez:~$ sudo sysctl -w net.ipv4.ip_forward=1
+net.ipv4.ip_forward = 1
+tattochek@Ubunturez:~$ sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+tattochek@Ubunturez:~$ sudo iptables -t nat -L -v
+Chain PREROUTING (policy ACCEPT 1 packets, 36 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 REDIRECT   tcp  --  any    any     anywhere             anywhere             tcp dpt:http redir ports 8080
+
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain POSTROUTING (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination  

@@ -1,0 +1,55 @@
+tattochek@Ubunturez:~$ pstree -p
+systemd(1)─┬─ModemManager(1140)─┬─{ModemManager}(1181)
+...
+           │                    ├─{ModemManager}(1182)
+           ├─snapd(871)─┬─{snapd}(1236)
+           │            ├─{snapd}(1237)
+           │            ├─{snapd}(1238)
+           │            ├─{snapd}(1239)
+           │            ├─{snapd}(1240)
+           │            ├─{snapd}(1241)
+           │            ├─{snapd}(1244)
+           │            ├─{snapd}(1256)
+           │            └─{snapd}(1523)
+           ├─sshd(1388)
+           ├─switcheroo-cont(877)─┬─{switcheroo-cont}(894)
+           │                      ├─{switcheroo-cont}(895)
+           │                      └─{switcheroo-cont}(984)
+...
+           │               ├─gnome-shell-cal(2603)─┬─{gnome-shell-cal}(2834)
+           │               │                       ├─{gnome-shell-cal}(2835)
+           │               │                       ├─{gnome-shell-cal}(2836)
+           │               │                       ├─{gnome-shell-cal}(2837)
+           │               │                       ├─{gnome-shell-cal}(2850)
+           │               │                       ├─{gnome-shell-cal}(2852)
+           │               │                       └─{gnome-shell-cal}(2963)
+           │               ├─gnome-terminal-(3404)─┬─bash(3412)───pstree(3456)
+           │               │                       ├─{gnome-terminal-}(3405)
+           │               │                       ├─{gnome-terminal-}(3406)
+           │               │                       ├─{gnome-terminal-}(3407)
+           │               │                       ├─{gnome-terminal-}(3408)
+           │               │                       ├─{gnome-terminal-}(3409)
+           │               │                       ├─{gnome-terminal-}(3410)
+           │               │                       └─{gnome-terminal-}(3411)
+...
+           └─xinetd(1347)
+
+#####################
+
+
+bash(3412) || sshd(1388)
+
+
+#####################
+tattochek@Ubunturez:~$ ps -p 3412
+    PID TTY          TIME CMD
+   3412 pts/0    00:00:00 bash
+tattochek@Ubunturez:~$ ps -p 1388
+    PID TTY          TIME CMD
+   1388 ?        00:00:00 sshd
+tattochek@Ubunturez:~$ ps -p 3412 -o pid,ppid,cmd
+    PID    PPID CMD
+   3412    3404 bash
+tattochek@Ubunturez:~$ ps -p 1388 -o pid,ppid,cmd
+    PID    PPID CMD
+   1388       1 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups

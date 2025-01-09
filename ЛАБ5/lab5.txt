@@ -1,0 +1,112 @@
+=================================================
+ЗАДАНИЕ 1:
+Создать группу developer и нескольких пользователей, входящих в неё. Создать директорию для совместной работы. 
+Сделать так, чтобы созданные одними пользователями файлы могли изменять другие пользователи этой группы.
+
+=================================================
+#Создадим группу developer
+
+tattochek@Ubunturez:~$ sudo addgroup developer
+
+#Создадим двух пользователей с группой developer, а также директорию для них.
+
+tattochek@Ubunturez:~$ sudo useradd -m -s /bin/bash dev1
+tattochek@Ubunturez:~$ sudo useradd -m -s /bin/bash dev2
+
+
+tattochek@Ubunturez:~$ sudo usermod -aG developer dev1
+tattochek@Ubunturez:~$ sudo usermod -aG developer dev2
+
+
+tattochek@Ubunturez:/home$ sudo mkdir developerzone
+
+
+tattochek@Ubunturez:/home$ ls -la
+
+...
+drwxr-xr-x  2 root      root      4096 Dec 19 01:57 developerzone
+...
+
+#Поменяем права директорию так, чтобы в ней могли работать только пользователи с группой developer
+
+tattochek@Ubunturez:/home$ sudo chown root:developer /home/developerzone/
+tattochek@Ubunturez:/home$ ls -la
+...
+drwxr-xr-x  2 root      developer 4096 Dec 19 01:57 developerzone
+...
+
+tattochek@Ubunturez:/home$ sudo chmod 775 /home/developerzone/
+tattochek@Ubunturez:/home$ sudo chmod g+s /home/developerzone/
+
+
+# Попытаемся создать файл в директории через пользователя dev1
+
+tattochek@Ubunturez:/home/developerzone$ su dev1
+Password: 
+dev1@Ubunturez:/home/developerzone$ nano user.txt
+dev1@Ubunturez:/home/developerzone$ ls -la
+total 12
+drwxrwsr-x 2 root developer 4096 Dec 19 02:14 .
+drwxr-xr-x 8 root root      4096 Dec 19 01:57 ..
+-rw-rw-r-- 1 dev1 developer    6 Dec 19 02:14 user.txt
+dev1@Ubunturez:/home/developerzone$ 
+
+# Выдаёт ошибку при попытке изменения при работе с пользователем не из группы developer
+
+tattochek@Ubunturez:/home/developerzone$ nano user.txt 
+
+
+# Проверяем работу dev2
+
+
+tattochek@Ubunturez:/home/developerzone$ su dev2
+Password: 
+dev2@Ubunturez:/home/developerzone$ nano user.txt 
+dev2@Ubunturez:/home/developerzone$ ls -la
+total 12
+drwxrwsr-x 2 root developer 4096 Dec 19 02:16 .
+drwxr-xr-x 8 root root      4096 Dec 19 01:57 ..
+-rw-rw-r-- 1 dev1 developer   10 Dec 19 02:16 user.txt
+
+=================================================
+
+# Создадим поддиректорию temp с возможностью удалить файл только владельцу.
+
+tattochek@Ubunturez:/home/developerzone$ sudo mkdir temp
+
+tattochek@Ubunturez:/home/developerzone$ sudo chmod +t temp/
+
+tattochek@Ubunturez:/home/developerzone$ sudo chmod ug+rw temp/
+
+
+## Зашёл под пользователя dev1 созданного ранее и создам файл temp1, который попытается удалить пользователь dev2
+
+dev1@Ubunturez:/home/developerzone/temp$ nano temp1.txt
+dev1@Ubunturez:/home/developerzone/temp$ exit
+exit
+tattochek@Ubunturez:/home/developerzone$ su dev2
+Password: 
+dev2@Ubunturez:/home/developerzone$ cd temp/
+dev2@Ubunturez:/home/developerzone/temp$ cat temp1.txt 
+Hello World!
+dev2@Ubunturez:/home/developerzone/temp$ rm temp1.txt 
+rm: cannot remove 'temp1.txt': Operation not permitted
+dev2@Ubunturez:/home/developerzone/temp$ 
+
+
+=================================================
+
+# Создадим поддиректорию hidden с невозможностью просматривать файлы при помощи команды ls.
+
+tattochek@Ubunturez:/home/developerzone$ sudo mkdir hidden
+tattochek@Ubunturez:/home/developerzone$ sudo chmod 711 hidden
+
+tattochek@Ubunturez:/home/developerzone$ sudo touch hidden/file1.txt
+tattochek@Ubunturez:/home/developerzone/hidden$ sudo nano file1.txt
+
+# Проверяем на возможность прочитать файл
+
+tattochek@Ubunturez:/home/developerzone/hidden$ su dev1
+Password: 
+dev1@Ubunturez:/home/developerzone/hidden$ cat file1.txt
+HelloWorld!!!!!!

@@ -1,0 +1,158 @@
+=================================================
+Задание 2
+Установка Docker
+
+tattochek@Ubunturez:~$ sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
+Reading package lists... Done
+Building dependency tree... Done
+...
+Processing triggers for gnome-menus (3.36.0-1.1ubuntu3) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.3) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+
+
+tattochek@Ubunturez:~$ su
+Password: 
+root@Ubunturez:/home/tattochek# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8)).
+OK
+
+root@Ubunturez:/home/tattochek# add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+Repository: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu noble stable'
+...
+W: https://download.docker.com/linux/ubuntu/dists/noble/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+
+
+oot@Ubunturez:/home/tattochek# apt update
+Hit:1 http://ru.archive.ubuntu.com/ubuntu noble InRelease
+...
+W: https://download.docker.com/linux/ubuntu/dists/noble/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+
+root@Ubunturez:/home/tattochek# apt install docker-ce -y
+Reading package lists... Done
+...
+Processing triggers for libc-bin (2.39-0ubuntu8.3) ...
+
+=================================================
+
+root@Ubunturez:/home/tattochek# systemctl status docker
+
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; preset: e>
+     Active: active (running) since Fri 2024-12-20 02:43:21 MSK; 5min ago
+TriggeredBy: ● docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 7360 (dockerd)
+      Tasks: 10
+     Memory: 21.5M (peak: 23.3M)
+        CPU: 1.645s
+     CGroup: /system.slice/docker.service
+             └─7360 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/cont>
+
+Dec 20 02:43:18 Ubunturez systemd[1]: Starting docker.service - Docker Applicat>
+Dec 20 02:43:18 Ubunturez dockerd[7360]: time="2024-12-20T02:43:18.669064522+03>
+Dec 20 02:43:18 Ubunturez dockerd[7360]: time="2024-12-20T02:43:18.670947130+03>
+Dec 20 02:43:18 Ubunturez dockerd[7360]: time="2024-12-20T02:43:18.671128779+03>
+Dec 20 02:43:19 Ubunturez dockerd[7360]: time="2024-12-20T02:43:19.515925768+03>
+Dec 20 02:43:21 Ubunturez dockerd[7360]: time="2024-12-20T02:43:21.179581653+03>
+Dec 20 02:43:21 Ubunturez dockerd[7360]: time="2024-12-20T02:43:21.426662777+03>
+Dec 20 02:43:21 Ubunturez dockerd[7360]: time="2024-12-20T02:43:21.427087977+03>
+Dec 20 02:43:21 Ubunturez dockerd[7360]: time="2024-12-20T02:43:21.973318298+03>
+Dec 20 02:43:21 Ubunturez systemd[1]: Started docker.service - Docker Applicati>
+~
+
+tattochek@Ubunturez:~$ docker --version
+Docker version 27.4.1, build b9d17ea
+
+=================================================
+Задание 3
+Запускаем контейнер с ubuntu
+
+tattochek@Ubunturez:~$ sudo docker pull ubuntu
+[sudo] password for tattochek: 
+Using default tag: latest
+latest: Pulling from library/ubuntu
+de44b265507a: Pull complete 
+Digest: sha256:80dd3c3b9c6cecb9f1667e9290b3bc61b78c2678c02cbdae5f0fea92cc6734ab
+Status: Downloaded newer image for ubuntu:latest
+docker.io/library/ubuntu:latest
+
+tattochek@Ubunturez:~$ sudo docker run ubuntu
+
+tattochek@Ubunturez:~$ sudo docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+tattochek@Ubunturez:~$ sudo docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS     NAMES
+3bb0de3019f0   ubuntu    "/bin/bash"   14 seconds ago   Exited (0) 12 seconds ago             flamboyant_shaw
+
+=================================================
+Задание 4*
+
+tattochek@Ubunturez:~$ mkdir nginx-php
+tattochek@Ubunturez:~$ cd nginx-php/
+tattochek@Ubunturez:~/nginx-php$ nano Dockerfile
+
+=================================================
+
+# Используем базовый образ с Ubuntu
+FROM ubuntu:latest
+
+# Устанавливаем зависимости
+RUN apt update && apt install -y nginx php-fpm
+
+# Копируем файл конфигурации nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Устанавливаем рабочую директорию
+WORKDIR /var/www/html
+
+# Открываем порты для nginx
+EXPOSE 80
+
+# Запускаем nginx и PHP-FPM при старте контейнера
+CMD ["sh", "-c", "service php7.4-fpm start && nginx -g 'daemon off;'"]
+
+=================================================
+
+tattochek@Ubunturez:~/nginx-php$ nano nginx.conf
+
+=================================================
+
+events {}
+
+http {
+    server {
+        listen 80;
+        root /var/www/html;
+        index index.php index.html;
+
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass 127.0.0.1:9000;
+        }
+    }
+}
+
+=================================================
+
+sudo docker build -t nginx-php .
+
+tattochek@Ubunturez:~/nginx-php$ sudo docker build -t nginx-php .
+[+] Building 402.1s (9/9) FINISHED                                                                      docker:default
+ => [internal] load build definition from Dockerfile                                                              0.6s
+ => => transferring dockerfile: 610B                                                                              0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                  0.0s
+ => [internal] load .dockerignore                                                                                 0.6s
+ => => transferring context: 2B                                                                                   0.0s
+ => [1/4] FROM docker.io/library/ubuntu:latest                                                                    0.4s
+ => [internal] load build context                                                                                 1.6s
+ => => transferring context: 288B                                                                                 0.0s
+ => [2/4] RUN apt update && apt install -y nginx php-fpm                                                        389.8s
+ => [3/4] COPY nginx.conf /etc/nginx/nginx.conf                                                                   1.3s 
+ => [4/4] WORKDIR /var/www/html                                                                                   1.6s 
+ => exporting to image                                                                                            3.4s 
+ => => exporting layers                                                                                           2.8s 
+ => => writing image sha256:54e70aaf023681c292bd3a03c989b82919513297268a4146884748e5413b39c9                      0.1s 
+ => => naming to docker.io/library/nginx-php 
+
+tattochek@Ubunturez:~/nginx-php$ sudo docker run -d -p 8080:80 nginx-php

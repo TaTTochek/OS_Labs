@@ -1,0 +1,120 @@
+=================================================
+Задание 1
+=================================================
+tattochek@Ubunturez:~$ nano user_name.sh
+
+
+=================================================
+#!/bin/bash
+for i in {1..3}; do
+    echo "Username: $USER"
+done
+=================================================
+
+
+tattochek@Ubunturez:~$ chmod +x user_name.sh 
+tattochek@Ubunturez:~$ ./user_name.sh 
+Username: tattochek
+Username: tattochek
+Username: tattochek
+
+=================================================
+Задание 2
+=================================================
+tattochek@Ubunturez:~$ nano even_num.sh
+
+
+=================================================
+#!/bin/bash
+num=0
+while [ $num -le 100 ]; do
+    echo $num
+    num=$((num + 2))
+done
+=================================================
+
+
+tattochek@Ubunturez:~$ chmod +x even_num.sh 
+tattochek@Ubunturez:~$ ./even_num.sh 
+0
+2
+4
+6
+8
+10
+12
+14
+16
+18
+20
+22
+24
+26
+28
+30
+32
+34
+36
+38
+40
+42
+44
+46
+48
+50
+52
+54
+56
+58
+60
+62
+64
+66
+68
+70
+72
+74
+76
+78
+80
+82
+84
+86
+88
+90
+92
+94
+96
+98
+100
+
+
+=================================================
+Задание 3
+=================================================
+
+tattochek@Ubunturez:~$ nano test.txt
+tattochek@Ubunturez:~$ cat test.txt
+Hello Backup World!
+
+tattochek@Ubunturez:~$ nano test_backup.sh
+=================================================
+cp ~/test.txt ~/test.txt.bak
+=================================================
+
+tattochek@Ubunturez:~$ chmod +x test_backup.sh 
+tattochek@Ubunturez:~$ crontab -e
+
+
+*/10 * * * * /bin/bash ~/backup.sh
+
+=================================================
+
+tattochek@Ubunturez:~$ ./test_backup.sh 
+tattochek@Ubunturez:~$ ls
+Desktop         monika.yml  TempFile2       user_name.sh
+Documents       Music       Templates       Videos
+Downloads       Pictures    TempLinkers     zip_3.0-13build1_amd64.deb
+even_num.sh     Public      test_backup.sh
+exampleErrors   snap        test.txt
+monika-logs.db  TempFile1   test.txt.bak

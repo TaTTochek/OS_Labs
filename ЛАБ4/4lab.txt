@@ -1,0 +1,83 @@
+=================================================
+ЗАДАНИЕ 1:
+
+-Создать файл file1 и наполнить его произвольным содержимым. 
+
+tattochek@Ubunturez:~$ echo 'TEMP CONTENT...' > file1
+
+-Скопировать его в file2. 
+
+tattochek@Ubunturez:~$ cp file1 file2
+
+-Создать символическую ссылку file3 на file1.
+
+tattochek@Ubunturez:~$ ln -s file1 file3
+
+tattochek@Ubunturez:~$ ls -l
+total 56
+...
+lrwxrwxrwx 1 tattochek tattochek    5 Nov 14 01:22 file3 -> file1
+...
+ 
+-Создать жёсткую ссылку file4 на file1. 
+
+tattochek@Ubunturez:~$ ln file1 file4
+tattochek@Ubunturez:~$ ls -l
+...
+-rw-rw-r-- 2 tattochek tattochek   16 Nov 14 00:59 file4
+...
+
+-Посмотреть, какие inode у файлов. 
+
+tattochek@Ubunturez:~$ ls -li
+total 60
+...
+544587 -rw-rw-r-- 2 tattochek tattochek   16 Nov 14 00:59 file1
+544669 -rw-rw-r-- 1 tattochek tattochek   16 Nov 14 01:00 file2
+571664 lrwxrwxrwx 1 tattochek tattochek    5 Nov 14 01:22 file3 -> file1
+544587 -rw-rw-r-- 2 tattochek tattochek   16 Nov 14 00:59 file4
+...
+
+-Удалить file1. Что стало с остальными созданными файлами? Попробовать вывести их на экран.
+
+tattochek@Ubunturez:~$ rm file1
+tattochek@Ubunturez:~$ cat file2 && cat file3
+TEMP CONTENT...
+cat: file3: No such file or directory
+tattochek@Ubunturez:~$ cat file4
+TEMP CONTENT...
+
+============================
+-- file2 - новый файл с другим inode, при удалении исходного не повлияет на этот файл, так как полученный файл имеет другой inode, ссылающийся на другой блок памяти
+-- file3 - при удалении исходного ссылка станет недействительной, так как файл хранит только путь к файлу
+-- file4 - при удалении исходного ссылка не перестанет работать, так как file1 и file4 имеют обращаются на один inode, из-за чего при удалении file1 новый файл станет единственным действительным 
+============================
+
+
+ЗАДАНИЕ 2. Дать созданным файлам другие, произвольные имена. Создать новую символическую ссылку. Переместить ссылки в другую директорию.
+
+tattochek@Ubunturez:~$ mv file1 TempFile1
+tattochek@Ubunturez:~$ cp TempFile1 TempFile2
+tattochek@Ubunturez:~$ mkdir TempLinkers
+
+tattochek@Ubunturez:~$ ln -s /home/tattochek/TempFile1 link1
+tattochek@Ubunturez:~$ ln -s /home/tattochek/TempFile2 link2
+
+tattochek@Ubunturez:~$ mv link1 TempLinkers/
+tattochek@Ubunturez:~$ mv link2 TempLinkers/
+
+
+
+ЗАДАНИЕ 3. Создать два произвольных файла. Первому присвоить права на чтение и запись для владельца и группы, только на чтение — для всех. Второму присвоить права на чтение и запись только для владельца.
+
+tattochek@Ubunturez:~$ chmod 664 TempFile1
+tattochek@Ubunturez:~$ chmod u=rw,g-wrx,o-wrx TempFile2
+
+tattochek@Ubunturez:~$ ls -l
+...
+-rw-rw-r-- 1 tattochek tattochek   16 Nov 14 02:37 TempFile1
+-rw------- 1 tattochek tattochek   16 Nov 14 02:40 TempFile2
+...
+
+
+=================================================
